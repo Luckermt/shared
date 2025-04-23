@@ -24,27 +24,29 @@ func NewPostgresConnection(cfg *config.Config) (*DB, error) {
 		cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName,
 	)
 
-	db, err := sql.Open("postgres", connStr)
+	sqlDB, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 
-	// Устанавливаем разумные ограничения на подключения
-	db.SetMaxOpenConns(25)
-	db.SetMaxIdleConns(25)
-	db.SetConnMaxLifetime(5 * time.Minute)
+	sqlDB.SetMaxOpenConns(25)
+	sqlDB.SetMaxIdleConns(25)
+	sqlDB.SetConnMaxLifetime(5 * time.Minute)
 
-	// Проверяем подключение
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err := db.PingContext(ctx); err != nil {
+	if err := sqlDB.PingContext(ctx); err != nil {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	logger.Log.Info("Successfully connected to PostgreSQL database")
+	logger.Log.Info("Successfully connected to PostgreSQL")
+	return &DB{sqlDB}, nil
+}
 
-	return &DB{db}, nil
+// GetDB возвращает базовый *sql.DB
+func (db *DB) GetDB() *sql.DB {
+	return db.DB
 }
 
 // WithTransaction выполняет переданную функцию в транзакции

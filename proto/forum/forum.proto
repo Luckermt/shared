@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package forum;
+option go_package = "github.com/luckermt/shared/proto/forum";  // Добавьте эту строку
+
+service ForumService {
+  rpc CreatePost (CreatePostRequest) returns (CreatePostResponse);
+}
+
+message CreatePostRequest {
+  string user_id = 1;
+  string username = 2;
+  string content = 3;
+}
+
+message CreatePostResponse {
+  bool success = 1;
+  string message = 2;
+}

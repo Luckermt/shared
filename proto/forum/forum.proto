@@ -5,6 +5,7 @@ option go_package = "github.com/luckermt/shared/proto/forum";  // Добавьт
 
 service ForumService {
   rpc CreatePost (CreatePostRequest) returns (CreatePostResponse);
+  rpc GetPosts (GetPostsRequest) returns (GetPostsResponse);
 }
 
 message CreatePostRequest {
@@ -16,4 +17,20 @@ message CreatePostRequest {
 message CreatePostResponse {
   bool success = 1;
   string message = 2;
+}
+
+message GetPostsRequest {
+  int32 limit = 1;
+}
+
+message GetPostsResponse {
+  repeated Post posts = 1;
+}
+
+message Post {
+  string id = 1;
+  string user_id = 2;
+  string username = 3;
+  string content = 4;
+  string created_at = 5;
 }
